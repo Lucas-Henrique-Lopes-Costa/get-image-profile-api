@@ -1,0 +1,27 @@
+<script>
+  function fetchProfilePic() {
+    const url =
+      "https://6c6c-189-89-220-52.ngrok-free.app/profile_pic?username=lucas_henrique_lopes_costa";
+
+    fetch(url, {
+      method: "GET",
+      headers: new Headers({
+        "ngrok-skip-browser-warning": "true",
+      }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Erro ao buscar imagem");
+        }
+        return response.text(); // Retorna o conteúdo do corpo da resposta como texto
+      })
+      .then((data) => {
+        // Atualiza o src da imagem com a URL retornada
+        document.getElementById("profilePic").src = data; // O URL da imagem está diretamente no corpo da resposta
+      })
+      .catch((error) => console.error("Erro ao buscar imagem:", error));
+  }
+
+  // Chama a função quando a página carrega
+  window.onload = fetchProfilePic;
+</script>
