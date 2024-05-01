@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, send_from_directory
+from flask import Flask, jsonify, request, send_from_directory, url_for
 from flask_cors import CORS
 import instaloader
 import requests
@@ -31,14 +31,19 @@ def get_profile_pic():
         else:
             return jsonify({'error': 'Failed to download image'}), 500
 
+        # Constrói a URL segura (HTTPS) para a imagem local
+        # Modifique para usar url_for e _external=True para garantir que a URL completa seja gerada com HTTPS
+        image_url = url_for('download_file', filename=f"{username}.jpg", _external=True)
+        image_url = image_url.replace("http://", "https://") if 'localhost' not in image_url else image_url
+        
         # Retorna a URL local da imagem
-        return jsonify({'profile_pic_url': request.host_url + image_path})
+        return jsonify({'profile_pic_url': image_url})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
 @app.route('/image/<path:filename>')
 def download_file(filename):
-    return send_from_directory(IMAGE_DIR, filename, as_attachment=True)
+    return send_from_directory(IMAGE_DIR, filename, as_attachment=False)
 
 if __name__ == '__main__':
     app.run(debug=True)
