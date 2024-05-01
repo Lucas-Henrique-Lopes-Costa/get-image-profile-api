@@ -1,27 +1,28 @@
-<script>
-  function fetchProfilePic() {
-    const url =
-      "https://6c6c-189-89-220-52.ngrok-free.app/profile_pic?username=lucas_henrique_lopes_costa";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Perfil Instagram</title>
+</head>
+<body>
+    <h1>Foto de Perfil do Instagram</h1>
+    <input type="text" id="username" placeholder="Digite o nome de usuário do Instagram">
+    <button onclick="fetchInstagramProfile()">Buscar</button>
+    <div id="profileContainer"></div>
 
-    fetch(url, {
-      method: "GET",
-      headers: new Headers({
-        "ngrok-skip-browser-warning": "true",
-      }),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Erro ao buscar imagem");
+    <script>
+        function fetchInstagramProfile() {
+            var username = document.getElementById('username').value;
+            fetch('http://seuservidor.com/api/instagram/' + username)
+                .then(response => response.json())
+                .then(data => {
+                    var img = document.createElement('img');
+                    img.src = data.profile_picture;
+                    document.getElementById('profileContainer').innerHTML = '';
+                    document.getElementById('profileContainer').appendChild(img);
+                })
+                .catch(error => console.error('Erro ao buscar dados:', error));
         }
-        return response.text(); // Retorna o conteúdo do corpo da resposta como texto
-      })
-      .then((data) => {
-        // Atualiza o src da imagem com a URL retornada
-        document.getElementById("profilePic").src = data; // O URL da imagem está diretamente no corpo da resposta
-      })
-      .catch((error) => console.error("Erro ao buscar imagem:", error));
-  }
-
-  // Chama a função quando a página carrega
-  window.onload = fetchProfilePic;
-</script>
+    </script>
+</body>
+</html>
