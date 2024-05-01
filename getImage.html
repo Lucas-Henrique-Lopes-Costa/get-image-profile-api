@@ -1,0 +1,32 @@
+<style>
+  /* Estilo para a imagem de perfil */
+  .profile-pic {
+    width: 100px;
+    height: 100px;
+    border-radius: 100px; /* Arredondamento da borda */
+    border: 3px solid #000; /* Borda preta */
+  }
+</style>
+
+<!-- Configura a imagem padrão diretamente no src -->
+<img id="profilePic" class="profile-pic" src="https://instapower.app.br/wp-content/uploads/2024/02/favlss.png" alt="Imagem de Perfil do Instagram">
+
+<script>
+  // Função para obter o parâmetro "url_image" da URL
+  function getUrlImage() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('url_image');
+  }
+
+  function displayProfilePic() {
+    const imageUrl = getUrlImage();
+    if (imageUrl) {
+      // Substitui a imagem padrão pela imagem do perfil, se disponível
+      const imgElement = document.getElementById('profilePic');
+      imgElement.src = decodeURIComponent(imageUrl);
+    }
+  }
+
+  // Chama a função quando a página carrega
+  window.onload = displayProfilePic;
+</script>

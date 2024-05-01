@@ -1,0 +1,40 @@
+<script>
+  // Função para extrair o parâmetro "username" da URL
+  function getUsernameFromUrl() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get("username");
+  }
+
+  function fetchProfilePic() {
+    const username = getUsernameFromUrl();
+    if (!username) {
+      console.error("Username is missing in URL");
+      return;
+    }
+
+    const apiUrl = `https://9347-189-89-220-52.ngrok-free.app/profile_pic?username=${username}`;
+
+    fetch(apiUrl, {
+      method: "GET",
+      headers: new Headers({
+        "ngrok-skip-browser-warning": "true",
+      }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Erro ao buscar imagem");
+        }
+        return response.json(); // Assume que o retorno é um JSON
+      })
+      .then((data) => {
+        // Redireciona para a página /instagram com o parâmetro url_image
+        window.location.href = `/instagram?url_image=${(
+          data.profile_pic_url
+        )}`;
+      })
+      .catch((error) => console.error("Erro ao buscar imagem:", error));
+  }
+
+  // Chama a função quando a página carrega
+  window.onload = fetchProfilePic;
+</script>

@@ -1,9 +1,15 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 import instaloader
+import requests
+import os
 
 app = Flask(__name__)
 CORS(app)  # Habilita CORS para todas as rotas
+
+# Pasta onde as imagens serão armazenadas
+IMAGE_DIR = 'image'
+os.makedirs(IMAGE_DIR, exist_ok=True)
 
 @app.route('/profile_pic', methods=['GET'])
 def get_profile_pic():
@@ -12,9 +18,27 @@ def get_profile_pic():
         return jsonify({'error': 'Username is required'}), 400
 
     L = instaloader.Instaloader()
-    profile = instaloader.Profile.from_username(L.context, username)
-    
-    return jsonify({'profile_pic_url': profile.profile_pic_url})
+    try:
+        profile = instaloader.Profile.from_username(L.context, username)
+        image_url = profile.profile_pic_url
+        image_path = os.path.join(IMAGE_DIR, f"{username}.jpg")
+
+        # Baixa a imagem e salva localmente
+        response = requests.get(image_url)
+        if response.status_code == 200:
+            with open(image_path, 'wb') as f:
+                f.write(response.content)
+        else:
+            return jsonify({'error': 'Failed to download image'}), 500
+
+        # Retorna a URL local da imagem
+        return jsonify({'profile_pic_url': request.host_url + image_path})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/image/<path:filename>')
+def download_file(filename):
+    return send_from_directory(IMAGE_DIR, filename, as_attachment=True)
 
 if __name__ == '__main__':
     app.run(debug=True)
