@@ -19,6 +19,12 @@ def get_profile_pic():
         return jsonify({"error": "Username is required"}), 400
 
     L = instaloader.Instaloader()
+
+    # Fazer login antes de carregar o perfil
+    L.login(
+        "lucashlc.contato", "Instagram@fake123"
+    )  # Substitua pelos detalhes de sua conta
+
     try:
         profile = instaloader.Profile.from_username(L.context, username)
         image_url = profile.profile_pic_url
@@ -32,8 +38,6 @@ def get_profile_pic():
         else:
             return jsonify({"error": "Failed to download image"}), 500
 
-        # Constrói a URL segura (HTTPS) para a imagem local
-        # Modifique para usar url_for e _external=True para garantir que a URL completa seja gerada com HTTPS
         image_url = url_for("download_file", filename=f"{username}.jpg", _external=True)
         image_url = (
             image_url.replace("http://", "https://")
@@ -41,7 +45,6 @@ def get_profile_pic():
             else image_url
         )
 
-        # Retorna a URL local da imagem
         return jsonify({"profile_pic_url": image_url})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
