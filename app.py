@@ -34,10 +34,10 @@ def get_profile_pic():
 
     L = instaloader.Instaloader()
 
-    # # Fazer login antes de carregar o perfil
-    # L.login(
-    #     "lucashlc.contato", "Instagram@fake123"
-    # )  # Substitua pelos detalhes de sua conta
+    # Fazer login antes de carregar o perfil
+    L.login(
+        "lucashlc.contato", "Instagram@fake123"
+    )  # Substitua pelos detalhes de sua conta
 
     try:
         profile = instaloader.Profile.from_username(L.context, username)
